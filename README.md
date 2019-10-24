@@ -7,6 +7,6 @@ from a specified library.
 runBot.py starts the bot with command line interaction allowing for connection and disconnection to different
 channels and running methods.
 
-In order to run the bot successfully you will need to get a oauth Token from Twitch.  This can be easily found
+In order to run the bot successfully you will need to get a OAuth Token from Twitch.  This can be easily found
 in user settings on Twitch.tv.  I reccommend that you write the token into the code and use it as part of your
 default credentials.
