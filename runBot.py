@@ -29,7 +29,7 @@
 
 
 
-from twitchChatBot_git import ChatBot
+from twitchChatBot import ChatBot
 import os
 
 
