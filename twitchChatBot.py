@@ -19,8 +19,6 @@
 #
 #             - write_chat : Logs chat to #channel_chat.log over the runtime.
 #
-#             - get_chat_dataframe : Returns Pandas dataframe from the #channel_chat.log.
-#
 #             - vote_counter : Using a predefined voteLibrary.txt (csv), counter will 
 #                              log chat messages then load a data frame and check
 #                              messages for instances of voteLibrary.txt strings.
@@ -51,11 +49,16 @@ import progressbar
 from datetime import datetime
 import re
 import pandas as pd
+from processChat import get_chat_dataframe
 
 
 
 class ChatBot:
-    def __init__(self, nickname, channel, server, port, token):
+    def __init__(self, nickname, channel,
+                 server = 'irc.chat.twitch.tv',
+                 port = 6667,
+                 token = None,
+                 ):
         '''
         - Sets up login credentials.  Server, port, token are all presaved.  This bot
           is for twitch so this data does not need to change for a given user.
@@ -72,7 +75,12 @@ class ChatBot:
         self.channel = channel
         self.server = server
         self.port = port
-        self.token = token
+
+        if token == None:
+            print('\n\n*** Specificy an OAuth Token ***\n\n')
+            return
+        else:
+            self.token = token
 
 
 
@@ -97,7 +105,11 @@ class ChatBot:
 
 
 
-    def change_socket(self, nickname, channel, server, port, token):
+    def change_socket(self, nickname, channel,
+                      server = 'irc.chat.twitch.tv',
+                      port = 6667,
+                      token = None,
+                      ):
         '''
         Closes current socket and changes to the new channel.
         '''
@@ -109,7 +121,12 @@ class ChatBot:
             self.channel = channel
             self.server = server
             self.port = port
-            self.token = token
+            
+            if token == None:
+                print('\n\n*** Specificy an OAuth Token ***\n\n')
+                return
+            else:
+                self.token = token
 
             self.connect_socket()
         except:
@@ -185,43 +202,7 @@ class ChatBot:
                 return
 
             
-         
-    def get_chat_dataframe(self):
-        '''
-        Loads the current #channel_chat.log file and returns a pandas dataframe.
-        '''
-        data = []
-
-        with open(self.logFile, 'r', encoding='utf-8') as f:
-            lines = f.read().split('\n\n\n')
-            # Go through lines and extract data by splitting strings appropriately 
-            for line in lines:
-                try:
-                    time_logged = line.split(' - ')[0].strip()
-                    time_logged = datetime.strptime(time_logged, '%Y-%m-%d_%H:%M:%S')
-
-                    username_message = line.split(' - ')[1:]
-                    username_message = ''.join(username_message).strip()
-
-                    username, channel, message = re.search(
-                        ':(.*)\\!.*@.*\\.tmi\\.twitch\\.tv PRIVMSG #(.*) :(.*)',
-                        username_message).groups()
-
-                    d = {
-                        'dt': time_logged,
-                        'channel': channel,
-                        'username': username,
-                        'message': message
-                        }
-
-                    data.append(d)
-
-                except Exception:
-                    pass
-
-        return pd.DataFrame().from_records(data)
-
-    
+          
 
     def vote_counter(self, runtime, voteLibrary='voteLibrary.txt',
                      showProgress=True, showChat=False, uniqueUsers=True):
@@ -231,8 +212,8 @@ class ChatBot:
         Returns a dictionary with vote Library keys to tallied values.
         '''
         # Run a logging session and get the data frame
-        self.write_chat(runtime)
-        chatLog = self.get_chat_dataframe()
+        self.write_chat(runtime, showProgress, showChat)
+        chatLog = get_chat_dataframe(self.logFile)
         chatLog.set_index('dt', inplace=True)
 
         with open(voteLibrary, 'r') as f:

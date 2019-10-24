@@ -29,7 +29,7 @@
 
 
 
-from twitchChatBot import ChatBot
+from twitchChatBot_git import ChatBot
 import os
 
 
@@ -67,11 +67,16 @@ if __name__ == '__main__':
 
     # Initialize bot with either default or user selected credentials
     while True:
-        server = input('\nInput server: ')
-        port = int(input('\nInput port'))
-        token = input('\nInput token')
-        bot = ChatBot(nickname, channel, server, port, token)
-        break
+        defaultCredentials = input('\nUse default credentials (Y/N): ')
+        if defaultCredentials.lower() == 'y':
+            bot = ChatBot(nickname, channel)
+            break
+        elif defaultCredentials.lower() == 'n':
+            server = input('\nInput server: ')
+            port = int(input('\nInput port'))
+            token = input('\nInput token')
+            bot = ChatBot(nickname, channel, server, port, token)
+            break
 
     # Connect the bot
     bot.connect_socket()
