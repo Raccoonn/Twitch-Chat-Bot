@@ -36,6 +36,12 @@
 # messages are in such a small amount for longer logging sessions I am just ignoring
 # it for the time being.
 #
+#
+#                  **** MAKE SURE YOU GET YOUR OAUTH TOKEN ****
+#
+# The OAuth token in this script is set to None.  I highly suggest you input your own 
+# token and use it as the default credentials.
+#
 #########################################################################################
 #########################################################################################
 
